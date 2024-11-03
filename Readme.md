@@ -27,8 +27,7 @@ This is a backend API for a video streaming platform that allows users to upload
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/video-streaming-platform.git
-   cd video-streaming-platform
+   
 
 2. Install dependencies:
     ```bash
