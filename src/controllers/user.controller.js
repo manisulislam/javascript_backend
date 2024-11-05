@@ -4,7 +4,7 @@ import {User} from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
-
+import fs from "fs"
 // generate and refresh token method
 const genereateAccessTokenAndRefreshToken= async(userId) =>
     {
@@ -72,10 +72,14 @@ const registerUser= asyncHandler(async (req,res)=>{
     const avatar= await uploadOnCloudinary(avatarLocalFilePath);
     const coverImage= await uploadOnCloudinary(coverImageLocalFilePath);
 
+
     if (!avatar) {
         throw new ApiError(400, "Avatar file is required");
         
     }
+
+    // fs.unlink(avatarLocalFilePath)
+    // fs.unlink(coverImageLocalFilePath)
 
 
     // 6. create user object- create entry in db
@@ -88,6 +92,7 @@ const registerUser= asyncHandler(async (req,res)=>{
         avatar: avatar.url,
         coverImage: coverImage?.url || ""
     })
+
     // 7. remove password and refresh token field from response
     const createdUser= await User.findById(user._id).select(
         "-password -refreshToken"
