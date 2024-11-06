@@ -32,7 +32,7 @@ const registerUser= asyncHandler(async (req,res)=>{
     const {username, email, fullName, password}=req.body;
     // console.log(username, email, fullName, password);
 
-
+    console.log(req.body)
     if(
         [username,email,fullName,password].some((field)=>field?.trim()==="")
     ){
@@ -53,16 +53,22 @@ const registerUser= asyncHandler(async (req,res)=>{
 
 
     // 4. check for images, check for avatar
-    const avatarLocalFilePath=req.files?.avatar[0]?.path;
+    let avatarLocalFilePath;
+    console.log(req.files)
+    // const avatarLocalFilePath=req.files?.avatar[0]?.path;
     // const coverImageLocalFilePath= req.files?.coverImage[0]?.path;
+    if(req.files && Array.isArray(req.files.avatar) && req.files.avatar.length>0){
+        avatarLocalFilePath=req.files.avatar[0].path;
+    }
 
     let coverImageLocalFilePath;
     if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length>0){
         coverImageLocalFilePath=req.files.coverImage[0].path;
     }
+    
 
     if (!avatarLocalFilePath) {
-        throw new ApiError(400, "Avatar file is required");
+        throw new ApiError(400, "Avatar local file is required");
         
     }
 
@@ -157,7 +163,8 @@ const loginUser= asyncHandler(async (req, res)=>{
 
     const options= {
         httpOnly: true,
-        secure: true
+        secure: true,
+        
     }
 
     return res
