@@ -4,7 +4,7 @@ import {User} from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
-import fs from "fs"
+
 // generate and refresh token method
 const genereateAccessTokenAndRefreshToken= async(userId) =>
     {
@@ -19,15 +19,7 @@ const genereateAccessTokenAndRefreshToken= async(userId) =>
 
 // register controller
 const registerUser= asyncHandler(async (req,res)=>{
-    // 1. get user details from frontend
-    // 2. validation - not empty
-    // 3. check if user already exists- username, email
-    // 4. check for images, check for avatar
-    // 5. upload them to cloudinary, avatar
-    // 6. create user object- create entry in db
-    // 7. remove password and refresh token field from response
-    // 8. check for user creation
-    // 9. return response
+    
     
     const {username, email, fullName, password}=req.body;
     // console.log(username, email, fullName, password);
@@ -52,42 +44,7 @@ const registerUser= asyncHandler(async (req,res)=>{
 
 
 
-    // 4. check for images, check for avatar
-    let avatarLocalFilePath;
-    console.log(req.files)
-    // const avatarLocalFilePath=req.files?.avatar[0]?.path;
-    // const coverImageLocalFilePath= req.files?.coverImage[0]?.path;
-    if(req.files && Array.isArray(req.files.avatar) && req.files.avatar.length>0){
-        avatarLocalFilePath=req.files.avatar[0].path;
-    }
-
-    let coverImageLocalFilePath;
-    if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length>0){
-        coverImageLocalFilePath=req.files.coverImage[0].path;
-    }
     
-
-    if (!avatarLocalFilePath) {
-        throw new ApiError(400, "Avatar local file is required");
-        
-    }
-
-
-
-    // 5. upload them to cloudinary, avatar
-    const avatar= await uploadOnCloudinary(avatarLocalFilePath);
-    const coverImage= await uploadOnCloudinary(coverImageLocalFilePath);
-
-
-    if (!avatar) {
-        throw new ApiError(400, "Avatar file is required");
-        
-    }
-
-    // fs.unlink(avatarLocalFilePath)
-    // fs.unlink(coverImageLocalFilePath)
-
-
     // 6. create user object- create entry in db
 
     const user = await User.create({
@@ -95,8 +52,7 @@ const registerUser= asyncHandler(async (req,res)=>{
         email,
         fullName,
         password,
-        avatar: avatar.url,
-        coverImage: coverImage?.url || ""
+        
     })
 
     // 7. remove password and refresh token field from response
