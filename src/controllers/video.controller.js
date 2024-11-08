@@ -35,19 +35,28 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description } = req.body;
+    console.log(req.body);
+    console.log(req.files);
     const videoFile = req.files.videoFile[0]; // Assuming multer is used and files are available in req.files
-
+    // const videoFile = req.files['videoFile']?.[0] // Assuming multer is used and files are available in req.files
+    // const thumbnail = req.files['thumbnail']?.[0];
+    const thumbnail= req.files.thumbnail[0]
+    
     if (!videoFile) {
         throw new ApiError(400, "Video file is required.");
     }
+    
+    console.log(videoFile);
+    const uploadedVideo = await uploadOnCloudinary(videoFile.path, "videoFile"); // Upload to Cloudinary
+    console.log(uploadedVideo)
+    const uploadedThumnail = await uploadOnCloudinary(thumbnail.path, "thumbnail"); // Upload to Cloudinary
 
-    const uploadedVideo = await uploadOnCloudinary(videoFile.path, "video"); // Upload to Cloudinary
     const newVideo = await Video.create({
-        videoFile: uploadedVideo.secure_url,
-        thumbnail: req.files.thumbnail[0].path, // Assuming thumbnail is provided
+        videoFile: uploadedVideo.playback_url,
+        thumbnail: uploadedThumnail.secure_url, 
         title,
         description,
-        duration: req.body.duration || 0, // Optional duration
+        duration: uploadedVideo.duration, // Optional duration
         isPublished: true,
         owner: req.user.id, // Assuming the user is authenticated
     });
